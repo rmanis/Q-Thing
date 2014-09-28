@@ -6,6 +6,7 @@ build
 *.o
 .settings
 .qmake.stash
+Makefile
 
 ._*
 .*.swp
