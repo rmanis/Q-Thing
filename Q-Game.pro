@@ -11,6 +11,11 @@ INCLUDEPATH += .
 DESTDIR = build
 
 # Input
-QT += opengl
-HEADERS += CrmGlWindow.h
-SOURCES += CrmGlWindow.cpp main.cpp
+QT += opengl gui
+CONFIG += debug
+HEADERS += globalicious.h CrmGlWindow.h Graphics/Shader.h
+SOURCES += CrmGlWindow.cpp main.cpp Graphics/Shader.cpp
+
+Shaders.files = Resources/fragmentShader.fs Resources/vertexShader.vs
+Shaders.path = Contents/MacOS/Resources
+QMAKE_BUNDLE_DATA += Shaders
