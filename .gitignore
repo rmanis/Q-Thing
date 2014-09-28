@@ -2,8 +2,12 @@
 .AppleDouble
 .LSOverride
 
-._*
+build
+*.o
+.settings
+.qmake.stash
 
+._*
 .*.swp
 
 # Files that might appear on external disk
