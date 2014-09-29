@@ -2,11 +2,12 @@
 #define _CRM_GL_WINDOW_H_
 
 #include <QGLWidget>
-#include "Graphics/Shader.h"
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
 
 class CrmGlWindow : public QGLWidget {
-    GLuint vertexBufferId;
-    Shader shader;
+    QOpenGLShaderProgram shader;
+    QOpenGLBuffer vertexBuffer;
 
 private:
     inline void viewport() {
@@ -17,6 +18,7 @@ private:
     void initializeShaders();
 
 public:
+    CrmGlWindow(QGLFormat &format);
     QSize sizeHint() const;
     QSize minimumSizeHint() const;
 

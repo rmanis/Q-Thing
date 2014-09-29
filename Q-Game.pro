@@ -13,9 +13,12 @@ DESTDIR = build
 # Input
 QT += opengl gui
 CONFIG += debug
-HEADERS += globalicious.h CrmGlWindow.h Graphics/Shader.h
-SOURCES += CrmGlWindow.cpp main.cpp Graphics/Shader.cpp
+HEADERS += globalicious.h CrmGlWindow.h
+SOURCES += CrmGlWindow.cpp main.cpp
 
-Shaders.files = Resources/fragmentShader.fs Resources/vertexShader.vs
-Shaders.path = Contents/MacOS/Resources
-QMAKE_BUNDLE_DATA += Shaders
+RESOURCES += \
+    q-game.qrc
+
+OTHER_FILES += \
+    Resources/fragmentShader.fs \
+    Resources/vertexShader.vs

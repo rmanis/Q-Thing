@@ -12,7 +12,12 @@ int main(int argc, char *argv[]) {
     QByteArray bytes = appPath.toLocal8Bit();
     directoryName = bytes.data();
 
-    CrmGlWindow myWidget;
+    QGLFormat qglFormat;
+    qglFormat.setVersion(4,1);
+    qglFormat.setProfile(QGLFormat::CoreProfile);
+    qglFormat.setSampleBuffers(true);
+
+    CrmGlWindow myWidget(qglFormat);
     myWidget.show();
 
     return app.exec();
