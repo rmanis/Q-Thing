@@ -6,8 +6,8 @@
 #include <QOpenGLShaderProgram>
 
 class CrmGlWindow : public QGLWidget {
-    QOpenGLShaderProgram shader;
-    QOpenGLBuffer vertexBuffer;
+    GLuint vBufferId;
+    GLuint programId;
 
 private:
     inline void viewport() {
@@ -15,6 +15,7 @@ private:
         int h = height();
         glViewport(0, 0, w, h);
     }
+    void initializeCoreVBO();
     void initializeShaders();
 
 public:
