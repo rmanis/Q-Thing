@@ -45,7 +45,7 @@ void CrmGlWindow::initializeGL() {
     qDebug() << "Driver Version String:" << versionString;
     qDebug() << "Current Context:" << format();
 
-    initializeCoreVBO();
+    initializeCoreVAO();
 
     glGenBuffers(1, &vBufferId);
     glBindBuffer(GL_ARRAY_BUFFER, vBufferId);
@@ -65,7 +65,7 @@ void CrmGlWindow::initializeGL() {
 /*
  * Without this, the core profile won't work.
  */
-void CrmGlWindow::initializeCoreVBO() {
+void CrmGlWindow::initializeCoreVAO() {
     // we need a VAO in core!
     GLuint VAO;
     PglGenVertexArrays glGenVertexArrays = (PglGenVertexArrays) context()->getProcAddress("glGenVertexArrays");

@@ -16,7 +16,7 @@ private:
         int h = height();
         glViewport(0, 0, w, h);
     }
-    void initializeCoreVBO();
+    void initializeCoreVAO();
     void initializeShaders();
 
 public:
