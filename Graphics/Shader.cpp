@@ -20,6 +20,12 @@ Shader::Shader(const char *vertexFilename, const char *fragmentFilename) :
     }
 }
 
+Shader &Shader::operator=(const Shader &rhs) {
+    vertexFilename = strdup(rhs.vertexFilename);
+    fragmentFilename = strdup(rhs.fragmentFilename);
+    return *this;
+}
+
 Shader::~Shader() {
     if (vertexFilename) {
         free(vertexFilename);

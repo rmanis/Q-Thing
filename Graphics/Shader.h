@@ -26,6 +26,9 @@ private:
     bool checkLinkStatus(GLuint programId);
     bool compileShader(GLuint shaderId);
     bool linkProgram(GLuint programId);
+
+public:
+    Shader &operator=(const Shader &rhs);
 };
 
 #endif
