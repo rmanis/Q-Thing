@@ -4,10 +4,11 @@
 #include <QGLWidget>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
+#include "Graphics/Shader.h"
 
 class CrmGlWindow : public QGLWidget {
     GLuint vBufferId;
-    GLuint programId;
+    Shader shader;
 
 private:
     inline void viewport() {

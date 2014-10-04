@@ -3,19 +3,13 @@
 #include <QFile>
 #include <QDebug>
 #include "CrmGlWindow.h"
+#include "Graphics/Shader.h"
 #include "globalicious.h"
 
 typedef void (*PglGenVertexArrays) (GLsizei n,  GLuint *arrays);
 typedef void (*PglBindVertexArray) (GLuint array);
 
-/*
- * These are supposed to already be a thing!
- */
-typedef void (*PFNGLGETSHADERIVPROC) (GLuint shader, GLenum pname, GLint *params);
-typedef void (*PFNGLGETSHADERLOGPROC) (GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog);
-
 /**
- * TODO: bring back the shader class
  * TODO: create a gameobject class that encapsulates this stuff
  * TODO: create world class that iterates over game objects
  */
@@ -32,8 +26,7 @@ GLfloat verts[] = {
 
 CrmGlWindow::CrmGlWindow(QGLFormat &format) :
         QGLWidget(format),
-        vBufferId(0),
-        programId(0) {
+        vBufferId(0) {
 }
 
 QSize CrmGlWindow::sizeHint() const
@@ -94,101 +87,8 @@ void CrmGlWindow::paintGL() {
     glDrawArrays(GL_LINE_LOOP, 0, 3);
 }
 
-bool checkStatus(GLuint objId,
-        PFNGLGETSHADERIVPROC propGet,
-        PFNGLGETSHADERLOGPROC getInfoLog,
-        GLenum statusType) {
-    bool status = true;
-    int success = 0;
-
-    propGet(objId, statusType, &success);
-
-    if (success == GL_FALSE) {
-        GLint logSize = 0;
-        propGet(objId, GL_INFO_LOG_LENGTH, &logSize);
-        char *log = new char[logSize + 1];
-        getInfoLog(objId, logSize, &logSize, log);
-        qWarning() << "Error : " << log;
-        delete[] log;
-        status = false;
-    }
-
-    return status;
-
-}
-
-bool checkCompileStatus(GLuint shaderId) {
-    bool status = checkStatus(shaderId, glGetShaderiv, glGetShaderInfoLog, GL_COMPILE_STATUS);
-    if (!status) {
-        qWarning() << "Compile failed";
-        glDeleteShader(shaderId);
-    }
-
-    return status;
-}
-
-bool checkLinkStatus(GLuint programId) {
-    bool status = checkStatus(programId, glGetProgramiv, glGetProgramInfoLog, GL_LINK_STATUS);
-    if (!status) {
-        qWarning() << "Link failed";
-        glDeleteProgram(programId);
-    }
-    return status;
-}
-
-bool compileShader(GLuint shaderId) {
-    glCompileShader(shaderId);
-    return checkCompileStatus(shaderId);
-}
-
-bool linkProgram(GLuint programId) {
-    glLinkProgram(programId);
-    return checkLinkStatus(programId);
-}
-
 void CrmGlWindow::initializeShaders() {
-    bool shouldCompile = true;
-    bool shouldLink = true;
-    char *vAdapter[1];
-    char *fAdapter[1];
-    QFile vertFile(":/Resources/vertexShader.vs");
-    QFile fragFile(":/Resources/fragmentShader.fs");
-    QByteArray vBytes, fBytes;
-
-    if (!vertFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Could not open vertex shader";
-        shouldCompile = false;
-    } else {
-        vBytes = vertFile.readAll();
-        vAdapter[0] = vBytes.data();
-    }
-
-    if (!fragFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Could not open fragment shader";
-        shouldCompile = false;
-    } else {
-        fBytes = fragFile.readAll();
-        fAdapter[0] = fBytes.data();
-    }
-
-    if (shouldCompile) {
-        programId = glCreateProgram();
-        GLuint vShaderId = glCreateShader(GL_VERTEX_SHADER);
-        GLuint fShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-
-        glShaderSource(vShaderId, 1, vAdapter, 0);
-        glShaderSource(fShaderId, 1, fAdapter, 0);
-        shouldLink = compileShader(vShaderId) & compileShader(fShaderId);
-
-        if (shouldLink) {
-            glAttachShader(programId, vShaderId);
-            glAttachShader(programId, fShaderId);
-
-            if (linkProgram(programId)) {
-                glUseProgram(programId);
-            }
-        } else {
-            glDeleteProgram(programId);
-        }
-    }
+    shader = Shader(":/Resources/vertexShader.vs", ":/Resources/fragmentShader.fs");
+    shader.load();
+    shader.use();
 }

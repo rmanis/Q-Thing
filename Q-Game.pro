@@ -13,8 +13,13 @@ DESTDIR = build
 # Input
 QT += opengl gui
 CONFIG += debug
-HEADERS += globalicious.h CrmGlWindow.h
-SOURCES += CrmGlWindow.cpp main.cpp
+HEADERS += globalicious.h \
+    CrmGlWindow.h \
+    Graphics/Shader.h
+
+SOURCES += main.cpp \
+    CrmGlWindow.cpp \
+    Graphics/Shader.cpp
 
 RESOURCES += \
     q-game.qrc
