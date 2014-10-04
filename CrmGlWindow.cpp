@@ -14,19 +14,53 @@ typedef void (*PglBindVertexArray) (GLuint array);
  * TODO: create world class that iterates over game objects
  */
 GLfloat verts[] = {
-    +0.0f, +0.1f, +0.0f,
+    -0.3f, +0.3f, +0.0f,
     1.0f, 0.0f, 0.0f,
 
-    -0.1f, -0.1f, +0.0f,
+    -0.1f, +0.3f, +0.0f,
     0.0f, 1.0f, 0.0f,
 
+    +0.1f, +0.3f, +0.0f,
+    0.0f, 0.0f, 1.0f,
+
+    +0.3f, +0.3f, +0.0f,
+    1.0f, 0.3f, 0.4f,
+
+
+    -0.2f, +0.1f, +0.0f,
+    0.2f, 0.3f, 0.4f,
+
+    0.0f, +0.1f, +0.0f,
+    0.2f, 0.8f, 0.4f,
+
+    0.2f, +0.1f, +0.0f,
+    0.2f, 0.3f, 0.4f,
+
+
+    -0.1f, -0.1f, +0.0f,
+    0.1f, 0.5f, 0.9f,
+
     +0.1f, -0.1f, +0.0f,
-    0.0f, 0.0f, 1.0f
+    0.5f, 0.5f, 1.0f,
+
+
+    +0.0f, -0.3f, +0.0f,
+    0.0f, 1.0f, 0.75f,
+};
+
+GLushort indices[] = {
+    0, 4, 1,
+    1, 5, 2,
+    2, 6, 3,
+    4, 7, 5,
+    5, 8, 6,
+    7, 9, 8,
 };
 
 CrmGlWindow::CrmGlWindow(QGLFormat &format) :
         QGLWidget(format),
-        vBufferId(0) {
+        vBufferId(0),
+        iBufferId(0) {
 }
 
 QSize CrmGlWindow::sizeHint() const
@@ -57,6 +91,12 @@ void CrmGlWindow::initializeGL() {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
             6 * sizeof(GL_FLOAT),
             (void *) (3 * sizeof(GL_FLOAT)));
+
+    glGenBuffers(1, &iBufferId);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iBufferId);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices),
+            indices, GL_STATIC_DRAW);
+
     glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
 
     initializeShaders();
@@ -84,7 +124,7 @@ void CrmGlWindow::paintGL() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glDrawArrays(GL_LINE_LOOP, 0, 3);
+    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(short), GL_UNSIGNED_SHORT, (void *) 0);
 }
 
 void CrmGlWindow::initializeShaders() {

@@ -8,6 +8,7 @@
 
 class CrmGlWindow : public QGLWidget {
     GLuint vBufferId;
+    GLuint iBufferId;
     Shader shader;
 
 private:
