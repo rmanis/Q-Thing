@@ -23,6 +23,7 @@ Shader::Shader(const char *vertexFilename, const char *fragmentFilename) :
 Shader &Shader::operator=(const Shader &rhs) {
     vertexFilename = strdup(rhs.vertexFilename);
     fragmentFilename = strdup(rhs.fragmentFilename);
+    programId = rhs.programId;
     return *this;
 }
 
@@ -38,8 +39,8 @@ Shader::~Shader() {
 void Shader::load(void) {
     bool shouldCompile = true;
     bool shouldLink = true;
-    char *vAdapter[1];
-    char *fAdapter[1];
+    const char *vAdapter[1];
+    const char *fAdapter[1];
     QFile vertFile(":/Resources/vertexShader.vs");
     QFile fragFile(":/Resources/fragmentShader.fs");
     QByteArray vBytes, fBytes;
@@ -73,12 +74,14 @@ void Shader::load(void) {
             glAttachShader(programId, vShaderId);
             glAttachShader(programId, fShaderId);
 
-            if (linkProgram(programId)) {
-                glUseProgram(programId);
+            if (!linkProgram(programId)) {
+                qWarning() << "Link error.";
             }
         } else {
             glDeleteProgram(programId);
         }
+        glDeleteShader(vShaderId);
+        glDeleteShader(fShaderId);
     }
 }
 
