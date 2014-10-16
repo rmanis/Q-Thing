@@ -3,7 +3,7 @@
 #include <QFile>
 #include <QDebug>
 #include "CrmGlWindow.h"
-#include "Graphics/Shader.h"
+#include "Graphics/ShaderManager.h"
 #include "globalicious.h"
 
 typedef void (*PglGenVertexArrays) (GLsizei n,  GLuint *arrays);
@@ -128,7 +128,7 @@ void CrmGlWindow::paintGL() {
 }
 
 void CrmGlWindow::initializeShaders() {
-    shader = Shader(":/Resources/vertexShader.vs", ":/Resources/fragmentShader.fs");
-    shader.load();
-    shader.use();
+
+    shader = ShaderManager::getInstance()->getShader("ColorPassthrough");
+    shader->use();
 }

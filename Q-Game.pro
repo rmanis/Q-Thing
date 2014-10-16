@@ -15,10 +15,12 @@ QT += opengl gui
 CONFIG += debug
 HEADERS += globalicious.h \
     CrmGlWindow.h \
+    Graphics/ShaderManager.h \
     Graphics/Shader.h
 
 SOURCES += main.cpp \
     CrmGlWindow.cpp \
+    Graphics/ShaderManager.cpp \
     Graphics/Shader.cpp
 
 RESOURCES += \

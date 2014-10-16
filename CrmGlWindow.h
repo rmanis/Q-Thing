@@ -2,14 +2,13 @@
 #define _CRM_GL_WINDOW_H_
 
 #include <QGLWidget>
-#include <QOpenGLBuffer>
-#include <QOpenGLShaderProgram>
-#include "Graphics/Shader.h"
+
+class Shader;
 
 class CrmGlWindow : public QGLWidget {
     GLuint vBufferId;
     GLuint iBufferId;
-    Shader shader;
+    Shader *shader;
 
 private:
     inline void viewport() {

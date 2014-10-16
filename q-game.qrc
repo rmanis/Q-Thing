@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>Resources/fragmentShader.fs</file>
-        <file>Resources/vertexShader.vs</file>
+        <file>Resources/Shaders/ColorPassthrough/fragmentShader.fs</file>
+        <file>Resources/Shaders/ColorPassthrough/vertexShader.vs</file>
     </qresource>
 </RCC>

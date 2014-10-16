@@ -6,34 +6,17 @@
 
 Shader::Shader() :
         programId(0),
-        vertexFilename(NULL),
-        fragmentFilename(NULL) {
+        vertexFilename(""),
+        fragmentFilename("") {
 }
 
-Shader::Shader(const char *vertexFilename, const char *fragmentFilename) :
-        programId(0) {
-    if (vertexFilename) {
-        this->vertexFilename = strdup(vertexFilename);
-    }
-    if (fragmentFilename) {
-        this->fragmentFilename = strdup(fragmentFilename);
-    }
-}
-
-Shader &Shader::operator=(const Shader &rhs) {
-    vertexFilename = strdup(rhs.vertexFilename);
-    fragmentFilename = strdup(rhs.fragmentFilename);
-    programId = rhs.programId;
-    return *this;
+Shader::Shader(QString vertexFilename, QString fragmentFilename) :
+        programId(0),
+        vertexFilename(vertexFilename),
+        fragmentFilename(fragmentFilename) {
 }
 
 Shader::~Shader() {
-    if (vertexFilename) {
-        free(vertexFilename);
-    }
-    if (fragmentFilename) {
-        free(fragmentFilename);
-    }
 }
 
 void Shader::load(void) {
@@ -41,8 +24,8 @@ void Shader::load(void) {
     bool shouldLink = true;
     const char *vAdapter[1];
     const char *fAdapter[1];
-    QFile vertFile(":/Resources/vertexShader.vs");
-    QFile fragFile(":/Resources/fragmentShader.fs");
+    QFile vertFile(vertexFilename);
+    QFile fragFile(fragmentFilename);
     QByteArray vBytes, fBytes;
 
     if (!vertFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
