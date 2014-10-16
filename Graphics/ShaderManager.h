@@ -18,8 +18,10 @@ class ShaderManager {
     static unsigned MAX_NUM_SHADERS;
 
     unsigned numShaders;
+    unsigned currentShader; // index of shaders array
     Shader **shaders;
-    QHash<QString, Shader*> *shaderByName;
+    QHash<QString, unsigned> *indexByName;
+    QHash<unsigned, QString> *nameByIndex;
 
     ShaderManager();
     void initialize();
@@ -29,7 +31,10 @@ public:
     ~ShaderManager();
     static ShaderManager *getInstance();
 
-    Shader *getShader(const char *shaderName);
+    void useShader(QString shaderName);
+    void increment(int amount = 1);
+    QStringList getShaderNames() const;
+    QString getShaderName() const;
 };
 
 #endif /* SHADERMANAGER_H_ */

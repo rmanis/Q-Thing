@@ -8,7 +8,6 @@ class Shader;
 class CrmGlWindow : public QGLWidget {
     GLuint vBufferId;
     GLuint iBufferId;
-    Shader *shader;
 
 private:
     inline void viewport() {
@@ -29,6 +28,9 @@ protected slots:
     void resizeGL(int width, int height);
 
     void paintGL();
+
+    void keyPressEvent(QKeyEvent *e);
+    void keyReleaseEvent(QKeyEvent *e);
 };
 
 #endif

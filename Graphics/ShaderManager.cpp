@@ -15,16 +15,18 @@
 ShaderManager *ShaderManager::manager = 0;
 unsigned ShaderManager::MAX_NUM_SHADERS = 100;
 
-ShaderManager::ShaderManager() : numShaders(0) {
+ShaderManager::ShaderManager() : numShaders(0), currentShader(0) {
     shaders = new Shader*[MAX_NUM_SHADERS];
 
-    shaderByName = new QHash<QString, Shader*>();
+    indexByName = new QHash<QString, unsigned>();
+    nameByIndex = new QHash<unsigned, QString>();
 }
 
 ShaderManager::~ShaderManager() {
-    delete shaderByName;
+    delete indexByName;
+    delete nameByIndex;
     for (unsigned i = 0; i < numShaders; i++) {
-        shaders[i] = 0;
+        delete shaders[i];
     }
     delete[] shaders;
 }
@@ -37,8 +39,27 @@ ShaderManager *ShaderManager::getInstance() {
     return ShaderManager::manager;
 }
 
-Shader *ShaderManager::getShader(const char *shaderName) {
-    return shaderByName->value(QString(shaderName));
+void ShaderManager::useShader(QString shaderName) {
+    unsigned index = indexByName->value(shaderName, -1);
+    if (index < numShaders) {
+        currentShader = index;
+        shaders[currentShader]->use();
+    }
+}
+
+void ShaderManager::increment(int amount) {
+    currentShader = (currentShader + amount) % numShaders;
+    if (currentShader < numShaders) {
+        shaders[currentShader]->use();
+    }
+}
+
+QStringList ShaderManager::getShaderNames() const {
+    return QStringList(indexByName->keys());
+}
+
+QString ShaderManager::getShaderName() const {
+    return (*nameByIndex)[currentShader];
 }
 
 void ShaderManager::initialize() {
@@ -56,11 +77,15 @@ void ShaderManager::loadDirectoryShaders(QDirIterator& dir) {
     while (dir.hasNext() && numShaders < MAX_NUM_SHADERS) {
         QString shaderDir = dir.next();
         QString shaderName = QFileInfo(shaderDir).baseName();
-        qDebug() << "Loading shader " << shaderName;
-        Shader* s = new Shader(shaderDir + "/vertexShader.vs",
-                shaderDir + "/fragmentShader.fs");
-        s->load();
-        shaders[numShaders++] = s;
-        (*shaderByName)[shaderName] = s;
+        if (shaderName.length() > 0) {
+            qDebug() << "Loading shader " << shaderName;
+            Shader* s = new Shader(shaderDir + "/vertexShader.vs",
+                    shaderDir + "/fragmentShader.fs");
+            s->load();
+            unsigned newIndex = numShaders++;
+            shaders[newIndex] = s;
+            (*indexByName)[shaderName] = newIndex;
+            (*nameByIndex)[newIndex] = shaderName;
+        }
     }
 }

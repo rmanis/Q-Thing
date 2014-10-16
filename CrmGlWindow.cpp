@@ -2,6 +2,7 @@
 #include <iostream>
 #include <QFile>
 #include <QDebug>
+#include <QKeyEvent>
 #include "CrmGlWindow.h"
 #include "Graphics/ShaderManager.h"
 #include "globalicious.h"
@@ -55,6 +56,10 @@ GLushort indices[] = {
     4, 7, 5,
     5, 8, 6,
     7, 9, 8,
+
+    1, 4, 5,
+    2, 5, 6,
+    5, 7, 8,
 };
 
 CrmGlWindow::CrmGlWindow(QGLFormat &format) :
@@ -127,8 +132,21 @@ void CrmGlWindow::paintGL() {
     glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(short), GL_UNSIGNED_SHORT, (void *) 0);
 }
 
+void CrmGlWindow::keyPressEvent(QKeyEvent *e) {
+    IGNORE(e);
+}
+void CrmGlWindow::keyReleaseEvent(QKeyEvent *e) {
+
+    if (e->key() == Qt::Key_Tab) {
+
+        ShaderManager::getInstance()->increment();
+        qDebug() << "Using shader " << ShaderManager::getInstance()->getShaderName();
+        update();
+    }
+}
+
+
 void CrmGlWindow::initializeShaders() {
 
-    shader = ShaderManager::getInstance()->getShader("ColorPassthrough");
-    shader->use();
+    ShaderManager::getInstance()->useShader("ColorPassthrough");
 }
