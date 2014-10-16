@@ -13,10 +13,8 @@
 #include "ShaderManager.h"
 
 ShaderManager *ShaderManager::manager = 0;
-unsigned ShaderManager::MAX_NUM_SHADERS = 100;
 
 ShaderManager::ShaderManager() : numShaders(0), currentShader(0) {
-    shaders = new Shader*[MAX_NUM_SHADERS];
 
     indexByName = new QHash<QString, unsigned>();
     nameByIndex = new QHash<unsigned, QString>();
@@ -28,7 +26,6 @@ ShaderManager::~ShaderManager() {
     for (unsigned i = 0; i < numShaders; i++) {
         delete shaders[i];
     }
-    delete[] shaders;
 }
 
 ShaderManager *ShaderManager::getInstance() {

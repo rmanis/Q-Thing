@@ -15,11 +15,11 @@ class QDirIterator;
 
 class ShaderManager {
     static ShaderManager *manager;
-    static unsigned MAX_NUM_SHADERS;
+    static const unsigned MAX_NUM_SHADERS = 100;
 
     unsigned numShaders;
     unsigned currentShader; // index of shaders array
-    Shader **shaders;
+    Shader *shaders[MAX_NUM_SHADERS];
     QHash<QString, unsigned> *indexByName;
     QHash<unsigned, QString> *nameByIndex;
 
