@@ -9,6 +9,7 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QHash>
+#include <QStandardPaths>
 #include "ShaderManager.h"
 
 ShaderManager *ShaderManager::manager = 0;
@@ -18,19 +19,6 @@ ShaderManager::ShaderManager() : numShaders(0) {
     shaders = new Shader*[MAX_NUM_SHADERS];
 
     shaderByName = new QHash<QString, Shader*>();
-    QDirIterator it(":/Resources/Shaders");
-    unsigned i = 0;
-    while (it.hasNext() && i < MAX_NUM_SHADERS) {
-        QString shaderDir = it.next();
-        QString shaderName = QFileInfo(shaderDir).baseName();
-        qDebug() << "Loading shader " << shaderName << " from Q resources.";
-
-        Shader *s = new Shader(shaderDir + "/vertexShader.vs",
-                shaderDir + "/fragmentShader.fs");
-        s->load();
-        shaders[i++] = s;
-        (*shaderByName)[shaderName] = s;
-    }
 }
 
 ShaderManager::~ShaderManager() {
@@ -44,10 +32,35 @@ ShaderManager::~ShaderManager() {
 ShaderManager *ShaderManager::getInstance() {
     if (!ShaderManager::manager) {
         ShaderManager::manager = new ShaderManager();
+        manager->initialize();
     }
     return ShaderManager::manager;
 }
 
 Shader *ShaderManager::getShader(const char *shaderName) {
     return shaderByName->value(QString(shaderName));
+}
+
+void ShaderManager::initialize() {
+    QDirIterator it(":/Resources/Shaders");
+    qDebug() << "Loading shaders from bundled resources.";
+    loadDirectoryShaders(it);
+
+    QString localDir = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Shaders";
+    QDirIterator locals(localDir);
+    qDebug() << "Loading shaders from filesystem.";
+    loadDirectoryShaders(locals);
+}
+
+void ShaderManager::loadDirectoryShaders(QDirIterator& dir) {
+    while (dir.hasNext() && numShaders < MAX_NUM_SHADERS) {
+        QString shaderDir = dir.next();
+        QString shaderName = QFileInfo(shaderDir).baseName();
+        qDebug() << "Loading shader " << shaderName;
+        Shader* s = new Shader(shaderDir + "/vertexShader.vs",
+                shaderDir + "/fragmentShader.fs");
+        s->load();
+        shaders[numShaders++] = s;
+        (*shaderByName)[shaderName] = s;
+    }
 }

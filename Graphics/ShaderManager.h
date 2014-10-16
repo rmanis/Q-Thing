@@ -11,6 +11,8 @@
 #include <QtContainerFwd>
 #include "Shader.h"
 
+class QDirIterator;
+
 class ShaderManager {
     static ShaderManager *manager;
     static unsigned MAX_NUM_SHADERS;
@@ -20,6 +22,9 @@ class ShaderManager {
     QHash<QString, Shader*> *shaderByName;
 
     ShaderManager();
+    void initialize();
+    void loadDirectoryShaders(QDirIterator& dir);
+
 public:
     ~ShaderManager();
     static ShaderManager *getInstance();
