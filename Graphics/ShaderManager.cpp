@@ -73,12 +73,13 @@ void ShaderManager::loadDirectoryShaders(QDirIterator& dir) {
         QString shaderName = QFileInfo(shaderDir).baseName();
         if (shaderName.length() > 0) {
             qDebug() << "Loading shader " << shaderName;
-            unsigned newIndex = numShaders++;
-            shaders[newIndex] = Shader(shaderDir + "/vertexShader.vs",
-                    shaderDir + "/fragmentShader.fs");
-            shaders[newIndex].load();
-            (*indexByName)[shaderName] = newIndex;
-            (*nameByIndex)[newIndex] = shaderName;
+            unsigned newIndex = numShaders;
+            shaders[newIndex] = Shader(shaderDir);
+            if (shaders[newIndex].load()) {
+                (*indexByName)[shaderName] = newIndex;
+                (*nameByIndex)[newIndex] = shaderName;
+                numShaders++;
+            }
         }
     }
 }

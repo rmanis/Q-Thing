@@ -1,19 +1,23 @@
 #include <cstring>
 #include <OpenGL/gl.h>
+#include <QDirIterator>
 #include <QFile>
 #include <QDebug>
+#include <QList>
 #include "Shader.h"
+
+const char *Shader::vertexSuffix   = ".vs";
+const char *Shader::fragmentSuffix = ".fs";
+const char *Shader::geometrySuffix = ".gs";
 
 Shader::Shader() :
         programId(0),
-        vertexFilename(""),
-        fragmentFilename("") {
+        shaderPath("") {
 }
 
-Shader::Shader(QString vertexFilename, QString fragmentFilename) :
+Shader::Shader(QString shaderPath) :
         programId(0),
-        vertexFilename(vertexFilename),
-        fragmentFilename(fragmentFilename) {
+        shaderPath(shaderPath) {
 }
 
 Shader::~Shader() {
@@ -22,54 +26,78 @@ Shader::~Shader() {
     }
 }
 
-void Shader::load(void) {
-    bool shouldCompile = true;
-    bool shouldLink = true;
-    const char *vAdapter[1];
-    const char *fAdapter[1];
-    QFile vertFile(vertexFilename);
-    QFile fragFile(fragmentFilename);
-    QByteArray vBytes, fBytes;
+bool Shader::load(void) {
+    bool success = false;
+    bool keepGoing = true;
+    QList<GLuint> shaders;
 
-    if (!vertFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Could not open vertex shader";
-        shouldCompile = false;
-    } else {
-        vBytes = vertFile.readAll();
-        vAdapter[0] = vBytes.data();
-    }
-
-    if (!fragFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Could not open fragment shader";
-        shouldCompile = false;
-    } else {
-        fBytes = fragFile.readAll();
-        fAdapter[0] = fBytes.data();
-    }
-
-    if (shouldCompile) {
-        programId = glCreateProgram();
-        GLuint vShaderId = glCreateShader(GL_VERTEX_SHADER);
-        GLuint fShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-
-        glShaderSource(vShaderId, 1, vAdapter, 0);
-        glShaderSource(fShaderId, 1, fAdapter, 0);
-        shouldLink = compileShader(vShaderId) & compileShader(fShaderId);
-
-        if (shouldLink) {
-            glAttachShader(programId, vShaderId);
-            glAttachShader(programId, fShaderId);
-
-            if (!linkProgram(programId)) {
-                qWarning() << "Link error.";
-            }
-        } else {
-            glDeleteProgram(programId);
+    QDirIterator it(shaderPath);
+    while (it.hasNext()) {
+        QString fileName = it.next();
+        bool tmpSuccess = true;
+        GLuint shaderId = createShader(fileName, &tmpSuccess);
+        if (shaderId) {
+            shaders.append(shaderId);
         }
-        glDeleteShader(vShaderId);
-        glDeleteShader(fShaderId);
+        keepGoing &= tmpSuccess;
     }
+    unsigned numShaders = shaders.size();
+    if (numShaders > 0) {
+        success = true;
+        programId = glCreateProgram();
+        for (unsigned i = 0; i < numShaders; i++) {
+            GLuint shaderId = shaders[i];
+            glAttachShader(programId, shaderId);
+            glDeleteShader(shaderId);
+        }
+        if (!linkProgram(programId)) {
+            qWarning() << "Link error.";
+            keepGoing = false;
+        }
+        if (!keepGoing) {
+            qWarning() << "Error loading shader " << shaderPath;
+            success = false;
+            glDeleteProgram(programId);
+            programId = 0;
+        }
+    }
+    return success;
 }
+
+GLuint Shader::createShader(QString path, bool *success) {
+    GLuint shaderId = 0;
+    GLenum type;
+    bool shouldCompile = true;
+
+    if (path.endsWith(QString(vertexSuffix))) {
+        type = GL_VERTEX_SHADER;
+    } else if (path.endsWith(QString(fragmentSuffix))) {
+        type = GL_FRAGMENT_SHADER;
+    } else if (path.endsWith(QString(geometrySuffix))) {
+        type = GL_GEOMETRY_SHADER;
+    } else {
+        return 0;
+    }
+
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Could not open shader " << path;
+        shouldCompile = false;
+        *success = false;
+    } else {
+        char *adapter[] = { f.readAll().data() };
+        shaderId = glCreateShader(type);
+        glShaderSource(shaderId, 1, adapter, 0);
+        if (!compileShader(shaderId)) {
+            glDeleteShader(shaderId);
+            shaderId = 0;
+            *success = false;
+        }
+    }
+
+    return shaderId;
+}
+
 
 void Shader::use(void) {
     if (!programId) {
@@ -102,7 +130,8 @@ bool Shader::checkStatus(GLuint objId,
 }
 
 bool Shader::checkCompileStatus(GLuint shaderId) {
-    bool status = checkStatus(shaderId, glGetShaderiv, glGetShaderInfoLog, GL_COMPILE_STATUS);
+    bool status = checkStatus(shaderId, glGetShaderiv, glGetShaderInfoLog,
+            GL_COMPILE_STATUS);
     if (!status) {
         qWarning() << "Compile failed";
         glDeleteShader(shaderId);
@@ -112,10 +141,10 @@ bool Shader::checkCompileStatus(GLuint shaderId) {
 }
 
 bool Shader::checkLinkStatus(GLuint programId) {
-    bool status = checkStatus(programId, glGetProgramiv, glGetProgramInfoLog, GL_LINK_STATUS);
+    bool status = checkStatus(programId, glGetProgramiv, glGetProgramInfoLog,
+            GL_LINK_STATUS);
     if (!status) {
         qWarning() << "Link failed";
-        glDeleteProgram(programId);
     }
     return status;
 }

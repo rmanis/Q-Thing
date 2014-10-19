@@ -12,15 +12,18 @@ class QString;
 
 class Shader {
     GLuint programId;
-    QString vertexFilename;
-    QString fragmentFilename;
+    QString shaderPath;
 public:
+    static const char *vertexSuffix;
+    static const char *fragmentSuffix;
+    static const char *geometrySuffix;
     Shader();
-    Shader(QString vertexFilename, QString fragmentFilename);
+    Shader(QString shaderPath);
     ~Shader();
-    void load(void);
+    bool load(void);
     void use(void);
 private:
+    GLuint createShader(QString path, bool *success);
     bool checkStatus(GLuint objId,
             PFNGLGETSHADERIVPROC propGet,
             PFNGLGETSHADERLOGPROC getInfoLog,
