@@ -21,7 +21,7 @@ class ShaderManager {
 
     unsigned numShaders;
     unsigned currentShader; // index of shaders array
-    Shader *shaders[MAX_NUM_SHADERS];
+    Shader shaders[MAX_NUM_SHADERS];
     QHash<QString, unsigned> *indexByName;
     QHash<unsigned, QString> *nameByIndex;
 

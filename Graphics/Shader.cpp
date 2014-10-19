@@ -17,6 +17,9 @@ Shader::Shader(QString vertexFilename, QString fragmentFilename) :
 }
 
 Shader::~Shader() {
+    if (programId) {
+        glDeleteProgram(programId);
+    }
 }
 
 void Shader::load(void) {

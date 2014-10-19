@@ -23,9 +23,6 @@ ShaderManager::ShaderManager() : numShaders(0), currentShader(0) {
 ShaderManager::~ShaderManager() {
     delete indexByName;
     delete nameByIndex;
-    for (unsigned i = 0; i < numShaders; i++) {
-        delete shaders[i];
-    }
 }
 
 ShaderManager *ShaderManager::getInstance() {
@@ -40,14 +37,14 @@ void ShaderManager::useShader(QString shaderName) {
     unsigned index = indexByName->value(shaderName, -1);
     if (index < numShaders) {
         currentShader = index;
-        shaders[currentShader]->use();
+        shaders[currentShader].use();
     }
 }
 
 void ShaderManager::increment(int amount) {
     currentShader = (currentShader + amount) % numShaders;
     if (currentShader < numShaders) {
-        shaders[currentShader]->use();
+        shaders[currentShader].use();
     }
 }
 
@@ -76,11 +73,10 @@ void ShaderManager::loadDirectoryShaders(QDirIterator& dir) {
         QString shaderName = QFileInfo(shaderDir).baseName();
         if (shaderName.length() > 0) {
             qDebug() << "Loading shader " << shaderName;
-            Shader* s = new Shader(shaderDir + "/vertexShader.vs",
-                    shaderDir + "/fragmentShader.fs");
-            s->load();
             unsigned newIndex = numShaders++;
-            shaders[newIndex] = s;
+            shaders[newIndex] = Shader(shaderDir + "/vertexShader.vs",
+                    shaderDir + "/fragmentShader.fs");
+            shaders[newIndex].load();
             (*indexByName)[shaderName] = newIndex;
             (*nameByIndex)[newIndex] = shaderName;
         }
