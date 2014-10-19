@@ -89,6 +89,7 @@ GLuint Shader::createShader(QString path, bool *success) {
         shaderId = glCreateShader(type);
         glShaderSource(shaderId, 1, adapter, 0);
         if (!compileShader(shaderId)) {
+            qWarning() << "Error on " << path;
             glDeleteShader(shaderId);
             shaderId = 0;
             *success = false;

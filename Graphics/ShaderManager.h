@@ -35,6 +35,7 @@ public:
 
     void useShader(QString shaderName);
     void increment(int amount = 1);
+    void reinitialize();
     QStringList getShaderNames() const;
     QString getShaderName() const;
 };

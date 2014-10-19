@@ -67,6 +67,19 @@ void ShaderManager::initialize() {
     loadDirectoryShaders(locals);
 }
 
+void ShaderManager::reinitialize() {
+    qDebug() << "Reloading shaders.";
+    for (unsigned i = 0; i < numShaders; i++) {
+        shaders[i] = Shader();
+    }
+    numShaders = 0;
+    currentShader = 0;
+    initialize();
+    if (numShaders) {
+        shaders[0].use();
+    }
+}
+
 void ShaderManager::loadDirectoryShaders(QDirIterator& dir) {
     while (dir.hasNext() && numShaders < MAX_NUM_SHADERS) {
         QString shaderDir = dir.next();

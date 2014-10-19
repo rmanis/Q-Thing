@@ -142,6 +142,9 @@ void CrmGlWindow::keyReleaseEvent(QKeyEvent *e) {
         getShaderManager()->increment();
         qDebug() << "Using shader " << getShaderManager()->getShaderName();
         update();
+    } else if (e->key() == Qt::Key_Space) {
+        getShaderManager()->reinitialize();
+        update();
     }
 }
 
