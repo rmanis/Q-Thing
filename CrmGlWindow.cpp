@@ -139,8 +139,8 @@ void CrmGlWindow::keyReleaseEvent(QKeyEvent *e) {
 
     if (e->key() == Qt::Key_Tab) {
 
-        ShaderManager::getInstance()->increment();
-        qDebug() << "Using shader " << ShaderManager::getInstance()->getShaderName();
+        getShaderManager()->increment();
+        qDebug() << "Using shader " << getShaderManager()->getShaderName();
         update();
     }
 }
@@ -148,5 +148,5 @@ void CrmGlWindow::keyReleaseEvent(QKeyEvent *e) {
 
 void CrmGlWindow::initializeShaders() {
 
-    ShaderManager::getInstance()->useShader("ColorPassthrough");
+    getShaderManager()->useShader("ColorPassthrough");
 }

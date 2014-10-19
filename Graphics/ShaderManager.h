@@ -11,6 +11,8 @@
 #include <QtContainerFwd>
 #include "Shader.h"
 
+#define getShaderManager() ShaderManager::getInstance()
+
 class QDirIterator;
 
 class ShaderManager {
