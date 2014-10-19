@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>Resources/Shaders/ColorPassthrough/fragmentShader.fs</file>
         <file>Resources/Shaders/ColorPassthrough/vertexShader.vs</file>
+
+        <file>Resources/Shaders/WireframeSolid/fragmentShader.fs</file>
+        <file>Resources/Shaders/WireframeSolid/geometry.gs</file>
+        <file>Resources/Shaders/WireframeSolid/vertexShader.vs</file>
     </qresource>
 </RCC>
