@@ -1,2 +1,10 @@
+Messing with Qt with OpenGL.
+
+We got shaders, we got modern OpenGL.
+This might turn into something some day.
+
+On a mac it searches for shaders at:
+~/Library/Application Support/Q-Game/Shaders
+
 To build:
 qmake && make
