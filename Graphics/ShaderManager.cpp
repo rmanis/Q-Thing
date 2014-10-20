@@ -16,13 +16,11 @@ ShaderManager *ShaderManager::manager = 0;
 
 ShaderManager::ShaderManager() : numShaders(0), currentShader(0) {
 
-    indexByName = new QHash<QString, unsigned>();
-    nameByIndex = new QHash<unsigned, QString>();
+    indexByName = QHash<QString, unsigned>();
+    nameByIndex = QHash<unsigned, QString>();
 }
 
 ShaderManager::~ShaderManager() {
-    delete indexByName;
-    delete nameByIndex;
 }
 
 ShaderManager *ShaderManager::getInstance() {
@@ -34,7 +32,7 @@ ShaderManager *ShaderManager::getInstance() {
 }
 
 void ShaderManager::useShader(QString shaderName) {
-    unsigned index = indexByName->value(shaderName, -1);
+    unsigned index = indexByName.value(shaderName, -1);
     if (index < numShaders) {
         currentShader = index;
         shaders[currentShader].use();
@@ -49,11 +47,11 @@ void ShaderManager::increment(int amount) {
 }
 
 QStringList ShaderManager::getShaderNames() const {
-    return QStringList(indexByName->keys());
+    return QStringList(indexByName.keys());
 }
 
 QString ShaderManager::getShaderName() const {
-    return (*nameByIndex)[currentShader];
+    return nameByIndex[currentShader];
 }
 
 void ShaderManager::initialize() {
@@ -74,6 +72,8 @@ void ShaderManager::reinitialize() {
     }
     numShaders = 0;
     currentShader = 0;
+    indexByName = QHash<QString, unsigned>();
+    nameByIndex = QHash<unsigned, QString>();
     initialize();
     if (numShaders) {
         shaders[0].use();
@@ -89,8 +89,8 @@ void ShaderManager::loadDirectoryShaders(QDirIterator& dir) {
             unsigned newIndex = numShaders;
             shaders[newIndex] = Shader(shaderDir);
             if (shaders[newIndex].load()) {
-                (*indexByName)[shaderName] = newIndex;
-                (*nameByIndex)[newIndex] = shaderName;
+                indexByName[shaderName] = newIndex;
+                nameByIndex[newIndex] = shaderName;
                 numShaders++;
             }
         }
