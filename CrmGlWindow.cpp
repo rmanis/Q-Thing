@@ -144,6 +144,7 @@ void CrmGlWindow::keyReleaseEvent(QKeyEvent *e) {
         update();
     } else if (e->key() == Qt::Key_Space) {
         getShaderManager()->reinitialize();
+        getShaderManager()->useShader("ColorPassthrough");
         update();
     }
 }
