@@ -1,5 +1,4 @@
 #include <cstring>
-#include <OpenGL/gl.h>
 #include <QDirIterator>
 #include <QFile>
 #include <QDebug>
