@@ -84,9 +84,10 @@ GLuint Shader::createShader(QString path, bool *success) {
         shouldCompile = false;
         *success = false;
     } else {
-        char *adapter[] = { f.readAll().data() };
+        QByteArray array = f.readAll();
+        const char *data = array.constData();
         shaderId = glCreateShader(type);
-        glShaderSource(shaderId, 1, adapter, 0);
+        glShaderSource(shaderId, 1, &data, NULL);
         if (!compileShader(shaderId)) {
             qWarning() << "Error on " << path;
             glDeleteShader(shaderId);
