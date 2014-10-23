@@ -29,3 +29,5 @@ RESOURCES += \
 OTHER_FILES += \
     Resources/fragmentShader.fs \
     Resources/vertexShader.vs
+
+QMAKE_CXXFLAGS += -DGL_GLEXT_PROTOTYPES
