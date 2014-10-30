@@ -84,6 +84,7 @@ void CrmGlWindow::initializeGL() {
     qDebug() << "Driver Version String:" << versionString;
     qDebug() << "Current Context:" << format();
 
+    glEnable(GL_DEPTH_TEST);
     initializeCoreVAO();
 
     glGenBuffers(1, &vBufferId);
@@ -127,7 +128,7 @@ void CrmGlWindow::resizeGL(int width, int height) {
 void CrmGlWindow::paintGL() {
 //    glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(short), GL_UNSIGNED_SHORT, (void *) 0);
 }
