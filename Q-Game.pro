@@ -6,6 +6,7 @@ TEMPLATE = app
 TARGET = Q-Game
 DEPENDPATH += .
 INCLUDEPATH += .
+CONFIG += object_parallel_to_source
 
 # Output
 DESTDIR = build
