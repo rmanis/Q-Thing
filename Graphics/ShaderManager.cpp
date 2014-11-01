@@ -67,6 +67,7 @@ void ShaderManager::initialize() {
 
 void ShaderManager::reinitialize() {
     qDebug() << "Reloading shaders.";
+    glUseProgram(0);
     for (unsigned i = 0; i < numShaders; i++) {
         shaders[i] = Shader();
     }
